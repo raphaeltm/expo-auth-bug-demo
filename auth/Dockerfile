@@ -1,0 +1,1 @@
+FROM bitnami/keycloak:20.0.3

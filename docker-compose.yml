@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  keycloak_db:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5431:5432"
+    volumes:
+      - ../volumes/keycloak_db:/var/lib/postgresql/data
+
+  keycloak:
+    image: bitnami/keycloak:20.0.3
+    environment:
+      KEYCLOAK_DATABASE_HOST: keycloak_db
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: postgres
+      KEYCLOAK_DATABASE_USER: postgres
+      KEYCLOAK_DATABASE_SCHEMA: public
+      KEYCLOAK_DATABASE_PASSWORD: password
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: password
+      KEYCLOAK_PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_EXTRA_ARGS: "-Dkeycloak.import=/tmp/sample-realm.json"
+    volumes:
+      - ./auth/sample-realm.json:/tmp/sample-realm.json
+    expose:
+      - 8080
+    ports:
+      - 5010:8080
+    depends_on:
+      - keycloak_db
