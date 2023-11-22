@@ -8,7 +8,7 @@ services:
     ports:
       - "5431:5432"
     volumes:
-      - ../volumes/keycloak_db:/var/lib/postgresql/data
+      - keycloak_db:/var/lib/postgresql/data
 
   keycloak:
     image: bitnami/keycloak:20.0.5
@@ -31,3 +31,6 @@ services:
       - 5010:8080
     depends_on:
       - keycloak_db
+
+volumes:
+  keycloak_db:

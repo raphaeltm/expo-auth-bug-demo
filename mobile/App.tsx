@@ -28,22 +28,26 @@ const authRequestOptions: AuthRequestConfig = {
 export default function App() {
   const discovery = useAutoDiscovery(`http://10.0.2.2:5010/realms/demoapp`);
 
-  console.log("@@ discovery", discovery);
-
   const login = async () => {
     const authRequest = new AuthRequest({
       ...authRequestOptions,
       state: Math.random().toString(36).substring(2, 15),
     });
 
-    console.log("@@ authorization endpoint", discovery?.authorizationEndpoint);
-    console.log("@@ authRequest", authRequest);
-    const authorizeResult = await authRequest.promptAsync({
-      authorizationEndpoint: discovery?.authorizationEndpoint,
-    });
-    console.log("@@ authorizeResult", authorizeResult);
+    let authorizeResult;
 
-    console.log("@@ exchange code");
+    try {
+      authorizeResult = await authRequest.promptAsync({
+        authorizationEndpoint: discovery?.authorizationEndpoint,
+      });
+    } catch (e) {
+      console.log(
+        "@@ you won't see this log because we don't just have an error: the app crashes before getting anything from `promptAsync`",
+        e
+      );
+    }
+    console.log("@@ we never see this log either because the app crashes...");
+
     const response = await exchangeCodeAsync(
       {
         code: (authorizeResult as any)?.params?.code,
@@ -55,7 +59,7 @@ export default function App() {
       },
       { tokenEndpoint: discovery?.tokenEndpoint }
     );
-    console.log("@@ exchange code response", response);
+
     if (response?.idToken && response?.refreshToken) {
       console.log("@@ exchange code response idToken", response.idToken);
       console.log(
@@ -63,7 +67,6 @@ export default function App() {
         response.refreshToken
       );
     }
-    console.log("@@ exchange code response idToken", response?.idToken);
   };
 
   return (
