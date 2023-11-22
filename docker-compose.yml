@@ -11,7 +11,7 @@ services:
       - ../volumes/keycloak_db:/var/lib/postgresql/data
 
   keycloak:
-    image: bitnami/keycloak:20.0.3
+    image: bitnami/keycloak:20.0.5
     environment:
       KEYCLOAK_DATABASE_HOST: keycloak_db
       KEYCLOAK_DATABASE_PORT: 5432
